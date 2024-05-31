@@ -264,6 +264,7 @@ extern LIS_Comm_f lis_comm_world_f;
 #define lis_vector_set_values_f F77_FUNC_(lis_vector_set_values_f, LIS_VECTOR_SET_VALUES_F) 
 #define lis_vector_set_values2_f F77_FUNC_(lis_vector_set_values2_f, LIS_VECTOR_SET_VALUES2_F) 
 #define lis_vector_set_values3_f F77_FUNC_(lis_vector_set_values3_f, LIS_VECTOR_SET_VALUES3_F) 
+#define lis_vector_set_values4_f F77_FUNC_(lis_vector_set_values4_f, LIS_VECTOR_SET_VALUES4_F) 
 #define lis_vector_get_value_f F77_FUNC_(lis_vector_get_value_f, LIS_VECTOR_GET_VALUE_F) 
 #define lis_vector_get_values_f F77_FUNC_(lis_vector_get_values_f, LIS_VECTOR_GET_VALUES_F) 
 #define lis_vector_scatter_f F77_FUNC_(lis_vector_scatter_f, LIS_VECTOR_SCATTER_F) 

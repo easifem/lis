@@ -244,6 +244,19 @@ void lis_vector_set_values3_f(LIS_INT *flag, LIS_INT *start, LIS_INT *count, LIS
 }
 
 #undef __FUNC__
+#define __FUNC__ "lis_vector_set_values4_f"
+void lis_vector_set_values4_f(LIS_INT *flag, LIS_INT *count, LIS_INT *index, LIS_SCALAR *values, LIS_VECTOR_F *v, LIS_SCALAR *scale, LIS_INT *ierr)
+{
+	LIS_DEBUG_FUNC_IN;
+
+	*ierr = lis_vector_set_values4(*flag,*count,index,values,((LIS_VECTOR)LIS_V2P(v)),*scale);
+	if( *ierr )	return;
+
+	LIS_DEBUG_FUNC_OUT;
+	return;
+}
+
+#undef __FUNC__
 #define __FUNC__ "lis_vector_get_value_f"
 void lis_vector_get_value_f(LIS_VECTOR_F *v, LIS_INT *i, LIS_SCALAR *value, LIS_INT *ierr)
 {

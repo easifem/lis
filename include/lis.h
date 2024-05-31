@@ -835,6 +835,7 @@ extern "C"
 	extern LIS_INT lis_vector_set_values(LIS_INT flag, LIS_INT count, LIS_INT index[], LIS_SCALAR value[], LIS_VECTOR v);
 	extern LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count, LIS_SCALAR value[], LIS_VECTOR v);
 	extern LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count, LIS_SCALAR value[], LIS_VECTOR v, LIS_SCALAR scale);
+	extern LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT count, LIS_INT index[], LIS_SCALAR value[], LIS_VECTOR v, LIS_SCALAR scale);
 	extern LIS_INT lis_vector_print(LIS_VECTOR x);
 	extern LIS_INT lis_vector_scatter(LIS_SCALAR value[], LIS_VECTOR v);
         extern LIS_INT lis_vector_gather(LIS_VECTOR v, LIS_SCALAR value[]);

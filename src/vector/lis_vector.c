@@ -57,6 +57,7 @@
  * lis_vector_set_values
  * lis_vector_set_values2
  * lis_vector_set_values3
+ * lis_vector_set_values4
  * lis_vector_get_value
  * lis_vector_get_values
  * lis_vector_get_range
@@ -761,6 +762,69 @@ LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
         return LIS_ERR_ILL_ARG;
       }
       v->value[start - is] += scale * value[i];
+    }
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values4"
+LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
+                               LIS_SCALAR value[], LIS_VECTOR v, LIS_SCALAR scale) {
+  LIS_INT np, i, is, ie;
+
+  LIS_DEBUG_FUNC_IN;
+
+  np = v->np;
+  is = v->is;
+  ie = v->ie;
+  if (v->status == LIS_VECTOR_NULL) {
+    v->value = (LIS_SCALAR *)lis_malloc(np * sizeof(LIS_SCALAR),
+                                        "lis_vector_set_values::v->value");
+    if (NULL == v->value) {
+      LIS_SETERR_MEM(np * sizeof(LIS_SCALAR));
+      return LIS_OUT_OF_MEMORY;
+    }
+    v->is_copy = LIS_TRUE;
+    v->status = LIS_VECTOR_ASSEMBLING;
+  }
+  if (flag == LIS_INS_VALUE) {
+    for (i = 0; i < count; i++) {
+      start = i;
+      if (v->origin)
+        start--;
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] = scale*value[i];
+    }
+  } else {
+    for (i = 0; i < count; i++) {
+      start = i;
+      if (v->origin)
+        start++;
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] += scale*value[i];
     }
   }
 
