@@ -621,7 +621,7 @@ LIS_INT lis_vector_set_values(LIS_INT flag, LIS_INT count, LIS_INT index[],
     for (i = 0; i < count; i++) {
       ii = index[i];
       if (v->origin)
-        ii++;
+        ii--;
       if (ii < is || ii >= ie) {
         if (v->origin) {
           is++;
@@ -646,10 +646,11 @@ LIS_INT lis_vector_set_values(LIS_INT flag, LIS_INT count, LIS_INT index[],
 #define __FUNC__ "lis_vector_set_values2"
 LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count,
                                LIS_SCALAR value[], LIS_VECTOR v) {
-  LIS_INT np, i, is, ie;
+  LIS_INT np, i, is, ie, start0;
 
   LIS_DEBUG_FUNC_IN;
 
+  start0 = start;
   np = v->np;
   is = v->is;
   ie = v->ie;
@@ -665,7 +666,7 @@ LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count,
   }
   if (flag == LIS_INS_VALUE) {
     for (i = 0; i < count; i++) {
-      start = i;
+      start = start0 + i;
       if (v->origin)
         start--;
       if (start < is || start >= ie) {
@@ -683,9 +684,9 @@ LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count,
     }
   } else {
     for (i = 0; i < count; i++) {
-      start = i;
+      start = start0 + i;
       if (v->origin)
-        start++;
+        start--;
       if (start < is || start >= ie) {
         if (v->origin) {
           is++;
@@ -711,10 +712,12 @@ LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count,
 LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
                                LIS_SCALAR value[], LIS_VECTOR v,
                                LIS_SCALAR scale) {
-  LIS_INT np, i, is, ie;
+
+  LIS_INT np, i, is, ie, start0;
 
   LIS_DEBUG_FUNC_IN;
 
+  start0 = start;
   np = v->np;
   is = v->is;
   ie = v->ie;
@@ -730,7 +733,7 @@ LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
   }
   if (flag == LIS_INS_VALUE) {
     for (i = 0; i < count; i++) {
-      start = i;
+      start = start0 + i;
       if (v->origin)
         start--;
       if (start < is || start >= ie) {
@@ -748,9 +751,9 @@ LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
     }
   } else {
     for (i = 0; i < count; i++) {
-      start = i;
+      start = start0 + i;
       if (v->origin)
-        start++;
+        start--;
       if (start < is || start >= ie) {
         if (v->origin) {
           is++;
@@ -774,10 +777,10 @@ LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
 #ifdef USE_FORTRAN
 #undef __FUNC__
 #define __FUNC__ "lis_vector_set_values4"
-LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
+LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT count, LIS_INT index[],
                                LIS_SCALAR value[], LIS_VECTOR v,
                                LIS_SCALAR scale) {
-  LIS_INT np, i, is, ie;
+  LIS_INT np, i, ii, is, ie;
 
   LIS_DEBUG_FUNC_IN;
 
@@ -796,7 +799,77 @@ LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
   }
   if (flag == LIS_INS_VALUE) {
     for (i = 0; i < count; i++) {
-      start = i;
+      ii = index[i];
+      if (v->origin)
+        ii--;
+      if (ii < is || ii >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          ii++;
+          i++;
+        }
+        LIS_SETERR4(LIS_ERR_ILL_ARG,
+                    "index[%D](=%D) is less than %D or not less than %D\n", i,
+                    ii, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[ii - is] = scale * value[i];
+    }
+  } else {
+    for (i = 0; i < count; i++) {
+      ii = index[i];
+      if (v->origin)
+        ii--;
+      if (ii < is || ii >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          ii++;
+          i++;
+        }
+        LIS_SETERR4(LIS_ERR_ILL_ARG,
+                    "index[%D](=%D) is less than %D or not less than %D\n", i,
+                    ii, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[ii - is] += scale * value[i];
+    }
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#endif
+
+#ifdef USE_FORTRAN
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values5"
+LIS_INT lis_vector_set_values5(LIS_INT flag, LIS_INT start, LIS_INT stride,
+                               LIS_INT count, LIS_SCALAR value[], LIS_VECTOR v,
+                               LIS_SCALAR scale) {
+  LIS_INT np, i, is, ie, start0;
+
+  LIS_DEBUG_FUNC_IN;
+
+  start0 = start;
+  np = v->np;
+  is = v->is;
+  ie = v->ie;
+  if (v->status == LIS_VECTOR_NULL) {
+    v->value = (LIS_SCALAR *)lis_malloc(np * sizeof(LIS_SCALAR),
+                                        "lis_vector_set_values::v->value");
+    if (NULL == v->value) {
+      LIS_SETERR_MEM(np * sizeof(LIS_SCALAR));
+      return LIS_OUT_OF_MEMORY;
+    }
+    v->is_copy = LIS_TRUE;
+    v->status = LIS_VECTOR_ASSEMBLING;
+  }
+  if (flag == LIS_INS_VALUE) {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
       if (v->origin)
         start--;
       if (start < is || start >= ie) {
@@ -814,9 +887,9 @@ LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
     }
   } else {
     for (i = 0; i < count; i++) {
-      start = i;
+      start = start0 + i * stride;
       if (v->origin)
-        start++;
+        start--;
       if (start < is || start >= ie) {
         if (v->origin) {
           is++;
@@ -841,16 +914,12 @@ LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
 #define __FUNC__ "lis_vector_get_size"
 LIS_INT lis_vector_get_size(LIS_VECTOR v, LIS_INT *local_n, LIS_INT *global_n) {
   LIS_INT err;
-
   LIS_DEBUG_FUNC_IN;
-
   err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
   if (err)
     return err;
-
   *local_n = v->n;
   *global_n = v->gn;
-
   LIS_DEBUG_FUNC_OUT;
   return LIS_SUCCESS;
 }
