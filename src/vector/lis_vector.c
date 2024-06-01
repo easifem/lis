@@ -910,6 +910,72 @@ LIS_INT lis_vector_set_values5(LIS_INT flag, LIS_INT start, LIS_INT stride,
 }
 #endif
 
+#ifdef USE_FORTRAN
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values6"
+LIS_INT lis_vector_set_values6(LIS_INT flag, LIS_INT start, LIS_INT stride,
+                               LIS_INT count, LIS_SCALAR value, LIS_VECTOR v) {
+  LIS_INT np, i, is, ie, start0;
+
+  LIS_DEBUG_FUNC_IN;
+
+  start0 = start;
+  np = v->np;
+  is = v->is;
+  ie = v->ie;
+  if (v->status == LIS_VECTOR_NULL) {
+    v->value = (LIS_SCALAR *)lis_malloc(np * sizeof(LIS_SCALAR),
+                                        "lis_vector_set_values::v->value");
+    if (NULL == v->value) {
+      LIS_SETERR_MEM(np * sizeof(LIS_SCALAR));
+      return LIS_OUT_OF_MEMORY;
+    }
+    v->is_copy = LIS_TRUE;
+    v->status = LIS_VECTOR_ASSEMBLING;
+  }
+  if (flag == LIS_INS_VALUE) {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      if (v->origin)
+        start--;
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] = value;
+    }
+  } else {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      if (v->origin)
+        start--;
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] += value;
+    }
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+#endif
+
 #undef __FUNC__
 #define __FUNC__ "lis_vector_get_size"
 LIS_INT lis_vector_get_size(LIS_VECTOR v, LIS_INT *local_n, LIS_INT *global_n) {

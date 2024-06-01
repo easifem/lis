@@ -321,6 +321,9 @@
 #define lis_vector_set_values5 lis_vector_set_values5_f
 #define LIS_VECTOR_SET_VALUES5 lis_vector_set_values5_f
 
+#define lis_vector_set_values6 lis_vector_set_values6_f
+#define LIS_VECTOR_SET_VALUES6 lis_vector_set_values6_f
+
 #define lis_vector_get_value lis_vector_get_value_f
 #define LIS_VECTOR_GET_VALUE lis_vector_get_value_f
 

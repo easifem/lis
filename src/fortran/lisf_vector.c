@@ -305,6 +305,27 @@ void lis_vector_set_values5_f(LIS_INT *flag, LIS_INT *start, LIS_INT *stride,
 }
 
 #undef __FUNC__
+#define __FUNC__ "lis_vector_set_values6_f"
+
+extern LIS_INT lis_vector_set_values6(LIS_INT flag, LIS_INT start,
+                                      LIS_INT stride, LIS_INT count,
+                                      LIS_SCALAR value, LIS_VECTOR v);
+
+void lis_vector_set_values6_f(LIS_INT *flag, LIS_INT *start, LIS_INT *stride,
+                              LIS_INT *count, LIS_SCALAR *values, LIS_VECTOR *v,
+                              LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_set_values6(*flag, *start, *stride, *count, *values,
+                                 ((LIS_VECTOR)LIS_V2P(v)));
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
 #define __FUNC__ "lis_vector_get_value_f"
 void lis_vector_get_value_f(LIS_VECTOR_F *v, LIS_INT *i, LIS_SCALAR *value,
                             LIS_INT *ierr) {
