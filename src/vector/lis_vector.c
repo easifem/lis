@@ -705,6 +705,7 @@ LIS_INT lis_vector_set_values2(LIS_INT flag, LIS_INT start, LIS_INT count,
   return LIS_SUCCESS;
 }
 
+#ifdef USE_FORTRAN
 #undef __FUNC__
 #define __FUNC__ "lis_vector_set_values3"
 LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
@@ -768,11 +769,14 @@ LIS_INT lis_vector_set_values3(LIS_INT flag, LIS_INT start, LIS_INT count,
   LIS_DEBUG_FUNC_OUT;
   return LIS_SUCCESS;
 }
+#endif
 
+#ifdef USE_FORTRAN
 #undef __FUNC__
 #define __FUNC__ "lis_vector_set_values4"
 LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
-                               LIS_SCALAR value[], LIS_VECTOR v, LIS_SCALAR scale) {
+                               LIS_SCALAR value[], LIS_VECTOR v,
+                               LIS_SCALAR scale) {
   LIS_INT np, i, is, ie;
 
   LIS_DEBUG_FUNC_IN;
@@ -806,7 +810,7 @@ LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
                     start, is, ie);
         return LIS_ERR_ILL_ARG;
       }
-      v->value[start - is] = scale*value[i];
+      v->value[start - is] = scale * value[i];
     }
   } else {
     for (i = 0; i < count; i++) {
@@ -824,13 +828,14 @@ LIS_INT lis_vector_set_values4(LIS_INT flag, LIS_INT start, LIS_INT count,
                     start, is, ie);
         return LIS_ERR_ILL_ARG;
       }
-      v->value[start - is] += scale*value[i];
+      v->value[start - is] += scale * value[i];
     }
   }
 
   LIS_DEBUG_FUNC_OUT;
   return LIS_SUCCESS;
 }
+#endif
 
 #undef __FUNC__
 #define __FUNC__ "lis_vector_get_size"
