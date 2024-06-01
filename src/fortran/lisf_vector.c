@@ -312,12 +312,36 @@ extern LIS_INT lis_vector_set_values6(LIS_INT flag, LIS_INT start,
                                       LIS_SCALAR value, LIS_VECTOR v);
 
 void lis_vector_set_values6_f(LIS_INT *flag, LIS_INT *start, LIS_INT *stride,
-                              LIS_INT *count, LIS_SCALAR *values, LIS_VECTOR *v,
-                              LIS_INT *ierr) {
+                              LIS_INT *count, LIS_SCALAR *values,
+                              LIS_VECTOR_F *v, LIS_INT *ierr) {
   LIS_DEBUG_FUNC_IN;
 
   *ierr = lis_vector_set_values6(*flag, *start, *stride, *count, *values,
                                  ((LIS_VECTOR)LIS_V2P(v)));
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values7_f"
+
+extern LIS_INT lis_vector_set_values7(LIS_INT flag, LIS_INT start,
+                                      LIS_INT stride, LIS_INT count,
+                                      LIS_VECTOR value, LIS_VECTOR v,
+                                      LIS_SCALAR scale);
+
+void lis_vector_set_values7_f(LIS_INT *flag, LIS_INT *start, LIS_INT *stride,
+                              LIS_INT *count, LIS_VECTOR_F *values,
+                              LIS_VECTOR_F *v, LIS_SCALAR *scale,
+                              LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_set_values7(*flag, *start, *stride, *count,
+                                 ((LIS_VECTOR)LIS_V2P(values)),
+                                 ((LIS_VECTOR)LIS_V2P(v)), *scale);
   if (*ierr)
     return;
 

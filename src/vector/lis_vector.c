@@ -58,6 +58,8 @@
  * lis_vector_set_values2
  * lis_vector_set_values3
  * lis_vector_set_values4
+ * lis_vector_set_values5
+ * lis_vector_set_values6
  * lis_vector_get_value
  * lis_vector_get_values
  * lis_vector_get_range
@@ -973,6 +975,22 @@ LIS_INT lis_vector_set_values6(LIS_INT flag, LIS_INT start, LIS_INT stride,
 
   LIS_DEBUG_FUNC_OUT;
   return LIS_SUCCESS;
+}
+#endif
+
+#ifdef USE_FORTRAN
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values7"
+LIS_INT lis_vector_set_values7(LIS_INT flag, LIS_INT start, LIS_INT stride,
+                               LIS_INT count, LIS_VECTOR value, LIS_VECTOR v,
+                               LIS_SCALAR scale) {
+  LIS_SCALAR *value_ptr;
+  LIS_INT err;
+  LIS_DEBUG_FUNC_IN;
+  value_ptr = value->value;
+  err = lis_vector_set_values5(flag, start, stride, count, value_ptr, v, scale);
+  LIS_DEBUG_FUNC_OUT;
+  return err;
 }
 #endif
 

@@ -372,6 +372,9 @@ extern LIS_Comm_f lis_comm_world_f;
 #define lis_vector_set_values6_f                                               \
   F77_FUNC_(lis_vector_set_values6_f, LIS_VECTOR_SET_VALUES6_F)
 
+#define lis_vector_set_values7_f                                               \
+  F77_FUNC_(lis_vector_set_values7_f, LIS_VECTOR_SET_VALUES7_F)
+
 #define lis_vector_get_value_f                                                 \
   F77_FUNC_(lis_vector_get_value_f, LIS_VECTOR_GET_VALUE_F)
 #define lis_vector_get_values_f                                                \
