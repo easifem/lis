@@ -60,6 +60,8 @@
  * lis_vector_set_values4
  * lis_vector_set_values5
  * lis_vector_set_values6
+ * lis_vector_set_values7
+ * lis_vector_set_values8
  * lis_vector_get_value
  * lis_vector_get_values
  * lis_vector_get_range
@@ -991,6 +993,159 @@ LIS_INT lis_vector_set_values7(LIS_INT flag, LIS_INT start, LIS_INT stride,
   err = lis_vector_set_values5(flag, start, stride, count, value_ptr, v, scale);
   LIS_DEBUG_FUNC_OUT;
   return err;
+}
+#endif
+
+#ifdef USE_FORTRAN
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values8"
+LIS_INT lis_vector_set_values8(LIS_INT flag, LIS_INT start, LIS_INT stride,
+                               LIS_INT count, LIS_SCALAR value[], LIS_VECTOR v,
+                               LIS_SCALAR scale, LIS_INT start_value,
+                               LIS_INT stride_value) {
+  LIS_INT np, i, is, ie, start0, j;
+
+  LIS_DEBUG_FUNC_IN;
+
+  start0 = start;
+  np = v->np;
+  is = v->is;
+  ie = v->ie;
+  if (v->status == LIS_VECTOR_NULL) {
+    v->value = (LIS_SCALAR *)lis_malloc(np * sizeof(LIS_SCALAR),
+                                        "lis_vector_set_values::v->value");
+    if (NULL == v->value) {
+      LIS_SETERR_MEM(np * sizeof(LIS_SCALAR));
+      return LIS_OUT_OF_MEMORY;
+    }
+    v->is_copy = LIS_TRUE;
+    v->status = LIS_VECTOR_ASSEMBLING;
+  }
+  if (flag == LIS_INS_VALUE) {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      j = start_value + i * stride_value;
+      if (v->origin) {
+        start--;
+        j--;
+      }
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] = scale * value[j];
+    }
+  } else {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      j = start_value + i * stride_value;
+      if (v->origin) {
+        start--;
+        j--;
+      }
+
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] += scale * value[j];
+    }
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+#endif
+
+#ifdef USE_FORTRAN
+#undef __FUNC__
+#define __FUNC__ "lis_vector_set_values9"
+LIS_INT lis_vector_set_values9(LIS_INT flag, LIS_INT start, LIS_INT stride,
+                               LIS_INT count, LIS_VECTOR value, LIS_VECTOR v,
+                               LIS_SCALAR scale, LIS_INT start_value,
+                               LIS_INT stride_value) {
+  LIS_INT np, i, is, ie, start0, j, is_value;
+
+  LIS_DEBUG_FUNC_IN;
+
+  start0 = start;
+  np = v->np;
+  is = v->is;
+  ie = v->ie;
+
+  is_value = value->is;
+
+  if (v->status == LIS_VECTOR_NULL) {
+    v->value = (LIS_SCALAR *)lis_malloc(np * sizeof(LIS_SCALAR),
+                                        "lis_vector_set_values::v->value");
+    if (NULL == v->value) {
+      LIS_SETERR_MEM(np * sizeof(LIS_SCALAR));
+      return LIS_OUT_OF_MEMORY;
+    }
+    v->is_copy = LIS_TRUE;
+    v->status = LIS_VECTOR_ASSEMBLING;
+  }
+  if (flag == LIS_INS_VALUE) {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      j = start_value + i * stride_value;
+      if (v->origin) {
+        start--;
+        j--;
+      }
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] = scale * v->value[j - is_value];
+    }
+  } else {
+    for (i = 0; i < count; i++) {
+      start = start0 + i * stride;
+      j = start_value + i * stride_value;
+      if (v->origin) {
+        start--;
+        j--;
+      }
+
+      if (start < is || start >= ie) {
+        if (v->origin) {
+          is++;
+          ie++;
+          start++;
+          i++;
+        }
+        LIS_SETERR3(LIS_ERR_ILL_ARG, "%D is less than %D or not less than %D\n",
+                    start, is, ie);
+        return LIS_ERR_ILL_ARG;
+      }
+      v->value[start - is] += scale * value->value[j - is_value];
+    }
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
 }
 #endif
 
