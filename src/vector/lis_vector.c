@@ -1118,7 +1118,7 @@ LIS_INT lis_vector_set_values9(LIS_INT flag, LIS_INT start, LIS_INT stride,
                     start, is, ie);
         return LIS_ERR_ILL_ARG;
       }
-      v->value[start - is] = scale * v->value[j - is_value];
+      v->value[start - is] = scale * value->value[j - is_value];
     }
   } else {
     for (i = 0; i < count; i++) {
@@ -1253,6 +1253,250 @@ LIS_INT lis_vector_get_values(LIS_VECTOR v, LIS_INT start, LIS_INT count,
   LIS_DEBUG_FUNC_OUT;
   return LIS_SUCCESS;
 }
+
+#ifdef USE_FORTRAN
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_index"
+
+LIS_INT lis_vector_get_values_from_index(LIS_VECTOR v, LIS_INT count,
+                                         LIS_INT index[], LIS_SCALAR value[]) {
+
+  LIS_INT err, n, i, ii, is, ie;
+
+  LIS_DEBUG_FUNC_IN;
+
+  err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
+  if (err)
+    return err;
+
+  n = v->n;
+  is = v->is;
+  ie = v->ie;
+
+  for (i = 0; i < count; i++) {
+    ii = index[i];
+    if (v->origin)
+      ii--;
+    if (ii < is || ii >= ie) {
+      if (v->origin) {
+        is++;
+        ie++;
+        ii++;
+        i++;
+      }
+      LIS_SETERR4(LIS_ERR_ILL_ARG,
+                  "index[%D](=%D) is less than %D or not less than %D\n", i, ii,
+                  is, ie);
+      return LIS_ERR_ILL_ARG;
+    }
+    value[i] = v->value[ii - is];
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+
+  return LIS_SUCCESS;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range"
+LIS_INT lis_vector_get_values_from_range(LIS_VECTOR v, LIS_INT start,
+                                         LIS_INT stride, LIS_INT count,
+                                         LIS_SCALAR value[]) {
+  LIS_INT err, n, i, is, ie, start0;
+
+  LIS_DEBUG_FUNC_IN;
+
+  err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
+  if (err)
+    return err;
+
+  n = v->n;
+  is = v->is;
+  ie = v->ie;
+  if (v->origin)
+    start--;
+  if (start < is || start >= ie) {
+    if (v->origin) {
+      start++;
+      is++;
+      ie++;
+    }
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) is less than %D or not less than %D\n", start, is,
+                ie);
+    return LIS_ERR_ILL_ARG;
+  }
+  if ((start - is + count) > n) {
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) + count(=%D) exceeds the range of vector v(=%D).\n",
+                start, count, ie);
+    return LIS_ERR_ILL_ARG;
+  }
+
+  start0 = start;
+  for (i = 0; i < count; i++) {
+    start = start0 + i * stride;
+    value[i] = v->value[start - is];
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range2"
+LIS_INT lis_vector_get_values_from_range2(LIS_VECTOR v, LIS_INT start,
+                                          LIS_INT stride, LIS_INT count,
+                                          LIS_SCALAR value[],
+                                          LIS_INT start_value,
+                                          LIS_INT stride_value) {
+  LIS_INT err, n, i, is, ie, start0, start_value0;
+
+  LIS_DEBUG_FUNC_IN;
+
+  err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
+  if (err)
+    return err;
+
+  n = v->n;
+  is = v->is;
+  ie = v->ie;
+  if (v->origin) {
+    start--;
+    start_value--;
+  }
+  if (start < is || start >= ie) {
+    if (v->origin) {
+      start++;
+      is++;
+      ie++;
+    }
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) is less than %D or not less than %D\n", start, is,
+                ie);
+    return LIS_ERR_ILL_ARG;
+  }
+  if ((start - is + count) > n) {
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) + count(=%D) exceeds the range of vector v(=%D).\n",
+                start, count, ie);
+    return LIS_ERR_ILL_ARG;
+  }
+
+  start0 = start;
+  start_value0 = start_value;
+  for (i = 0; i < count; i++) {
+    start = start0 + i * stride;
+    start_value = start_value0 + i * stride_value;
+    value[start_value] = v->value[start - is];
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range3"
+LIS_INT lis_vector_get_values_from_range3(LIS_VECTOR v, LIS_INT start,
+                                          LIS_INT stride, LIS_INT count,
+                                          LIS_VECTOR value) {
+  LIS_INT err, n, i, is, ie, start0;
+
+  LIS_DEBUG_FUNC_IN;
+
+  err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
+  if (err)
+    return err;
+
+  n = v->n;
+  is = v->is;
+  ie = v->ie;
+  if (v->origin) {
+    start--;
+  }
+  if (start < is || start >= ie) {
+    if (v->origin) {
+      start++;
+      is++;
+      ie++;
+    }
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) is less than %D or not less than %D\n", start, is,
+                ie);
+    return LIS_ERR_ILL_ARG;
+  }
+  if ((start - is + count) > n) {
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) + count(=%D) exceeds the range of vector v(=%D).\n",
+                start, count, ie);
+    return LIS_ERR_ILL_ARG;
+  }
+
+  start0 = start;
+  for (i = 0; i < count; i++) {
+    start = start0 + i * stride;
+    value->value[i] = v->value[start - is];
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range4"
+LIS_INT lis_vector_get_values_from_range4(LIS_VECTOR v, LIS_INT start,
+                                          LIS_INT stride, LIS_INT count,
+                                          LIS_VECTOR value, LIS_INT start_value,
+                                          LIS_INT stride_value) {
+  LIS_INT err, n, i, is, ie, start0, start_value0, is_value;
+
+  LIS_DEBUG_FUNC_IN;
+
+  err = lis_vector_check(v, LIS_VECTOR_CHECK_NULL);
+  if (err)
+    return err;
+
+  is_value = value->is;
+
+  n = v->n;
+  is = v->is;
+  ie = v->ie;
+  if (v->origin) {
+    start--;
+    start_value--;
+  }
+  if (start < is || start >= ie) {
+    if (v->origin) {
+      start++;
+      is++;
+      ie++;
+    }
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) is less than %D or not less than %D\n", start, is,
+                ie);
+    return LIS_ERR_ILL_ARG;
+  }
+  if ((start - is + count) > n) {
+    LIS_SETERR3(LIS_ERR_ILL_ARG,
+                "start(=%D) + count(=%D) exceeds the range of vector v(=%D).\n",
+                start, count, ie);
+    return LIS_ERR_ILL_ARG;
+  }
+
+  start0 = start;
+  start_value0 = start_value;
+  for (i = 0; i < count; i++) {
+    start = start0 + i * stride;
+    start_value = start_value0 + i * stride_value;
+    value->value[start_value - is_value] = v->value[start - is];
+  }
+
+  LIS_DEBUG_FUNC_OUT;
+  return LIS_SUCCESS;
+}
+
+#endif
 
 LIS_INT lis_vector_print(LIS_VECTOR x) {
 #ifdef USE_MPI

@@ -383,10 +383,33 @@ extern LIS_Comm_f lis_comm_world_f;
 
 #define lis_vector_get_value_f                                                 \
   F77_FUNC_(lis_vector_get_value_f, LIS_VECTOR_GET_VALUE_F)
+
 #define lis_vector_get_values_f                                                \
   F77_FUNC_(lis_vector_get_values_f, LIS_VECTOR_GET_VALUES_F)
+
+#define lis_vector_get_values_from_index_f                                     \
+  F77_FUNC_(lis_vector_get_values_from_index_f,                                \
+            LIS_VECTOR_GET_VALUES_FROM_INDEX_F)
+
+#define lis_vector_get_values_from_range_f                                     \
+  F77_FUNC_(lis_vector_get_values_from_range_f,                                \
+            LIS_VECTOR_GET_VALUES_FROM_RANGE_F)
+
+#define lis_vector_get_values_from_range2_f                                    \
+  F77_FUNC_(lis_vector_get_values_from_range2_f,                               \
+            LIS_VECTOR_GET_VALUES_FROM_RANGE2_F)
+
+#define lis_vector_get_values_from_range3_f                                    \
+  F77_FUNC_(lis_vector_get_values_from_range3_f,                               \
+            LIS_VECTOR_GET_VALUES_FROM_RANGE3_F)
+
+#define lis_vector_get_values_from_range4_f                                    \
+  F77_FUNC_(lis_vector_get_values_from_range4_f,                               \
+            LIS_VECTOR_GET_VALUES_FROM_RANGE4_F)
+
 #define lis_vector_scatter_f                                                   \
   F77_FUNC_(lis_vector_scatter_f, LIS_VECTOR_SCATTER_F)
+
 #define lis_vector_gather_f F77_FUNC_(lis_vector_gather_f, LIS_VECTOR_GATHER_F)
 #define lis_vector_print_f F77_FUNC_(lis_vector_print_f, LIS_VECTOR_PRINT_F)
 #define lis_vector_swap_f F77_FUNC_(lis_vector_swap_f, LIS_VECTOR_SWAP_F)

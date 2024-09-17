@@ -432,6 +432,123 @@ void lis_vector_get_values_f(LIS_VECTOR_F *v, LIS_INT *start, LIS_INT *count,
 }
 
 #undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_index_f"
+
+extern LIS_INT lis_vector_get_values_from_index(LIS_VECTOR v, LIS_INT count,
+                                                LIS_INT index[],
+                                                LIS_SCALAR value[]);
+
+void lis_vector_get_values_from_index_f(LIS_VECTOR_F *v, LIS_INT *count,
+                                        LIS_INT *index, LIS_SCALAR *values,
+                                        LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_get_values_from_index((LIS_VECTOR)LIS_V2P(v), *count,
+                                           index, values);
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range_f"
+
+extern LIS_INT lis_vector_get_values_from_range(LIS_VECTOR v, LIS_INT start,
+                                                LIS_INT stride, LIS_INT count,
+                                                LIS_SCALAR value[]);
+
+void lis_vector_get_values_from_range_f(LIS_VECTOR_F *v, LIS_INT *start,
+                                        LIS_INT *stride, LIS_INT *count,
+                                        LIS_SCALAR *values, LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_get_values_from_range((LIS_VECTOR)LIS_V2P(v), *start,
+                                           *stride, *count, values);
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range2_f"
+
+extern LIS_INT lis_vector_get_values_from_range2(LIS_VECTOR v, LIS_INT start,
+                                                 LIS_INT stride, LIS_INT count,
+                                                 LIS_SCALAR value[],
+                                                 LIS_INT start_value,
+                                                 LIS_INT stride_value);
+
+void lis_vector_get_values_from_range2_f(LIS_VECTOR_F *v, LIS_INT *start,
+                                         LIS_INT *stride, LIS_INT *count,
+                                         LIS_SCALAR *values,
+                                         LIS_INT *start_value,
+                                         LIS_INT *stride_value, LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_get_values_from_range2((LIS_VECTOR)LIS_V2P(v), *start,
+                                            *stride, *count, values,
+                                            *start_value, *stride_value);
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range3_f"
+
+extern LIS_INT lis_vector_get_values_from_range3(LIS_VECTOR v, LIS_INT start,
+                                                 LIS_INT stride, LIS_INT count,
+                                                 LIS_VECTOR value);
+
+void lis_vector_get_values_from_range3_f(LIS_VECTOR_F *v, LIS_INT *start,
+                                         LIS_INT *stride, LIS_INT *count,
+                                         LIS_VECTOR_F *values, LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr =
+      lis_vector_get_values_from_range3((LIS_VECTOR)LIS_V2P(v), *start, *stride,
+                                        *count, (LIS_VECTOR)LIS_V2P(values));
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
+#define __FUNC__ "lis_vector_get_values_from_range4_f"
+
+extern LIS_INT lis_vector_get_values_from_range4(LIS_VECTOR v, LIS_INT start,
+                                                 LIS_INT stride, LIS_INT count,
+                                                 LIS_VECTOR value,
+                                                 LIS_INT start_value,
+                                                 LIS_INT stride_value);
+
+void lis_vector_get_values_from_range4_f(LIS_VECTOR_F *v, LIS_INT *start,
+                                         LIS_INT *stride, LIS_INT *count,
+                                         LIS_VECTOR_F *values,
+                                         LIS_INT *start_value,
+                                         LIS_INT *stride_value, LIS_INT *ierr) {
+  LIS_DEBUG_FUNC_IN;
+
+  *ierr = lis_vector_get_values_from_range4(
+      (LIS_VECTOR)LIS_V2P(v), *start, *stride, *count,
+      (LIS_VECTOR)LIS_V2P(values), *start_value, *stride_value);
+
+  if (*ierr)
+    return;
+
+  LIS_DEBUG_FUNC_OUT;
+  return;
+}
+
+#undef __FUNC__
 #define __FUNC__ "lis_vector_scatter_f"
 void lis_vector_scatter_f(LIS_SCALAR *values, LIS_VECTOR_F *v, LIS_INT *ierr) {
   LIS_DEBUG_FUNC_IN;
