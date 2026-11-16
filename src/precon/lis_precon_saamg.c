@@ -92,6 +92,8 @@ LIS_INT lis_precon_create_saamg(LIS_SOLVER solver, LIS_PRECON precon)
 	LIS_INT	unsym,sol;
 	LIS_INT	err;
 	LIS_REAL theta; 
+	LIS_INT converted = LIS_FALSE;
+
 	#ifdef USE_MPI
 		LIS_MPI_Fint comm;
 	#endif
@@ -107,8 +109,7 @@ LIS_INT lis_precon_create_saamg(LIS_SOLVER solver, LIS_PRECON precon)
 		err = lis_matrix_convert(A,B);
 		if( err ) return err;
 		solver->A = B;
-		lis_matrix_destroy(B);
-		solver->A = A;
+		converted = LIS_TRUE;
 	}
 	precon->A       = solver->A;
 	precon->is_copy = LIS_FALSE;
@@ -164,23 +165,23 @@ LIS_INT lis_precon_create_saamg(LIS_SOLVER solver, LIS_PRECON precon)
 	#else
 		if( !unsym )
 		{
-			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_ptr) 
-        (&A->n,&A->L->nnz,&A->U->nnz,
+			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_ptr)(&A->n,&A->L->nnz,&A->U->nnz,
 				A->D->value,A->L->value,A->L->ptr,A->L->index,
 				A->U->value, A->U->ptr, A->U->index, &precon->level_num, &theta);
 		}
 		else
 		{
-			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_unsym_ptr)
-        (&A->n,&A->L->nnz,&A->U->nnz,
+			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_unsym_ptr)(&A->n,&A->L->nnz,&A->U->nnz,
 				A->D->value,A->L->value,A->L->ptr,A->L->index,
 				A->U->value, A->U->ptr, A->U->index, &precon->level_num, &theta);
 		}
 	#endif
+
+	if(converted)
+	{
+		lis_matrix_destroy(B);
+		solver->A = A;
+	}
 
 	LIS_DEBUG_FUNC_OUT;
     return LIS_SUCCESS;
@@ -307,18 +308,13 @@ LIS_INT lis_precon_psd_update_saamg(LIS_SOLVER solver, LIS_PRECON precon)
 	#else
 		if( !unsym )
 		{
-			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_ptr)
-        (&A->n,&A->L->nnz,&A->U->nnz,
+			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_ptr)(&A->n,&A->L->nnz,&A->U->nnz,
 				A->D->value,A->L->value,A->L->ptr,A->L->index,
 				A->U->value, A->U->ptr, A->U->index, &precon->level_num, &theta);
 		}
 		else
 		{
-			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, 
-               LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_unsym_ptr)(&A->n,&A->L->nnz,&A->U->nnz,
+			(*(void (*)(LIS_INT *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_SCALAR *, LIS_INT *, LIS_INT *, LIS_INT *, LIS_REAL *))f_data_creation_unsym_ptr)(&A->n,&A->L->nnz,&A->U->nnz,
 				A->D->value,A->L->value,A->L->ptr,A->L->index,
 				A->U->value, A->U->ptr, A->U->index, &precon->level_num, &theta);
 		}
@@ -353,8 +349,7 @@ LIS_INT lis_psolve_saamg(LIS_SOLVER solver, LIS_VECTOR b, LIS_VECTOR x)
 			 &comm,A->commtable->ws,A->commtable->wr,&n,&precon->wsize);
 	#else
 		n = b->n;
-		 (*(void (*)(LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_SCALAR *))f_v_cycle_ptr)
-      (&n,b->value,x->value,&precon->level_num,precon->temp->value);
+		 (*(void (*)(LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_SCALAR *))f_v_cycle_ptr)(&n,b->value,x->value,&precon->level_num,precon->temp->value);
 	#endif
 	LIS_DEBUG_FUNC_OUT;
 	return LIS_SUCCESS;
@@ -392,8 +387,7 @@ LIS_INT lis_psolveh_saamg(LIS_SOLVER solver, LIS_VECTOR b, LIS_VECTOR x)
 			 &comm,A->commtable->ws,A->commtable->wr,&n,&precon->wsize);
 	#else
 		n = b->n;
-		 (*(void (*)(LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_SCALAR *))f_v_cycle_ptr)
-      (&n,b->value,x->value,&precon->level_num,precon->temp->value);
+		 (*(void (*)(LIS_INT *, LIS_SCALAR *, LIS_SCALAR *, LIS_INT *, LIS_SCALAR *))f_v_cycle_ptr)(&n,b->value,x->value,&precon->level_num,precon->temp->value);
 	#endif
 	LIS_DEBUG_FUNC_OUT;
 	return LIS_SUCCESS;
